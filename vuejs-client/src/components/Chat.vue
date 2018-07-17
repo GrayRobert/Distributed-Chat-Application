@@ -1,15 +1,9 @@
 <template>
 
 </template>
-<template>
-
-</template>
 
 <script>
-export default {
-  name: 'Chat',
-  props: {
-    msg: String
+  export default {
+    name: 'Chat',
   }
-}
 </script>
