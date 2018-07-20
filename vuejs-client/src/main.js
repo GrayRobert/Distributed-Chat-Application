@@ -9,7 +9,7 @@ new Vue({
 }).$mount('#app')
 
 // End point for websocket
-var webSocketEndPoint = '//localhost:8090/chat-socket';
+var webSocketEndPoint = '//35.197.231.13/:8090/chat-socket';
 
 
 var usernamePage = document.querySelector('#username-page');
