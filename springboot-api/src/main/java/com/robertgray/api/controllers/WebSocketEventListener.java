@@ -37,6 +37,7 @@ public class WebSocketEventListener {
             chatMessage.setType(ChatMessage.MessageType.LEAVE);
             chatMessage.setSender(username);
 
+            //Send the message to the broadcast channel
             messagingTemplate.convertAndSend("/topic/public", chatMessage);
         }
     }
