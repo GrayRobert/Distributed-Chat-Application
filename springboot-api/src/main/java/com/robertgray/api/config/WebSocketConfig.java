@@ -24,7 +24,7 @@ public class WebSocketConfig extends WebSocketMessageBrokerConfigurationSupport 
 
     @Override
     public void registerStompEndpoints(final StompEndpointRegistry registry) {
-        registry.addEndpoint("/chat-socket").setAllowedOrigins("http://localhost:8080").withSockJS();
+        registry.addEndpoint("/chat-socket").setAllowedOrigins("*").withSockJS();
     }
 
     //embedded active mq broker only for dev purposes

@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-    <Nav/>
+    <Navbar/>
     <Chat/>
   </div>
 </template>
 <script>
 import Chat from './components/Chat.vue'
-import Nav from './components/Nav.vue'
+import Navbar from './components/Navbar.vue'
 export default {
   name: 'app',
   components: {
-      'Nav': Nav,
+      'Navbar': Navbar,
       'Chat': Chat,
   }
 }

@@ -22,6 +22,12 @@
                             </li>
                         </template>
                     </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column">
+                <div v-if="showUserPage == false" class="messageInput">
                     <form id="messageForm" name="messageForm">
                         <div>
                             <input v-model="messageBody" type="text" id="message" placeholder="Type a message..." autocomplete="off">
@@ -133,18 +139,23 @@ export default {
     body {
         margin: 0;
         padding: 0;
-        background-color: #f4f4f4;
+        background-color: #fff;
         height: 100%;
     }
 
+    .container {
+        top:35px;
+        padding: 0px !important;
+        height: 100%;
+    }
     .chat-container {
         margin-left: auto;
         margin-right: auto;
         background-color: #fff;
         margin-top: 30px;
-        height: calc(100% - 60px);
+        height: calc(100%);
         position: relative;
-        padding:30px;
+        padding:30px 30px 0px 30px;
     }
 
     .chat-container .event-message {
@@ -163,8 +174,6 @@ export default {
         list-style-type: none;
         background-color: #FFF;
         margin: 0;
-        overflow: auto;
-        overflow-y: scroll;
         padding: 0 20px 0px 20px;
         height: calc(100% - 150px);
     }
@@ -189,7 +198,6 @@ export default {
         position: absolute;
         width: 42px;
         height: 42px;
-        overflow: hidden;
         left: 30px;
         display: inline-block;
         vertical-align: middle;
@@ -205,17 +213,31 @@ export default {
     .chat-container .chat-message span {
         color: #333;
         font-weight: 600;
-        margin-left:15px;
+        margin-left:30px;
     }
 
     .chat-container .chat-message p {
         color: #43464b;
-        margin-left:15px;
+        margin-left:30px;
     }
 
     #messageForm {
-        padding-top:10px;
+        padding:0px 30px 0px 30px;
         margin-top:20px;
+        margin-bottom: 0px !important;
+        position: fixed;
+        bottom:0px;
+        background-color: #FFF;
+        width:100%;
+    }
+
+    #messageForm input {
+        float: left;
+        width:60%;
+    }
+
+    #messageForm button {
+        float: left;
     }
 
     @media only screen and (max-width: 600px) {
