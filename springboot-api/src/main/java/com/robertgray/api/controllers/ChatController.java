@@ -21,7 +21,8 @@ public class ChatController {
         return chatMessage;
     }
 
-    @CrossOrigin(origins = { "http://localhost:8080", "http://localhost:8090" }, maxAge = 6000)
+
+
     @MessageMapping("/chat.addUser")
     @SendTo("/topic/public")
     public ChatMessage addUser(@Payload ChatMessage chatMessage,

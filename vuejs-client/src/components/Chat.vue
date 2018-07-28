@@ -2,6 +2,9 @@
     <div class="container">
         <div class="row">
             <div class="column">
+                <div v-if="connected != 'Connected'" class="connecting" v-bind:style="{ color: connectingErrorColour }">
+                        <span v-html="connected"></span>
+                </div>
                 <div v-if="showUserPage == true" class="chat-container">
                     <h1 class="title">Type your username</h1>
                     <form id="usernameForm" name="usernameForm">
@@ -10,9 +13,6 @@
                     </form>
                 </div>
                 <div id="chat-page" v-else class="chat-container">
-                    <div v-if="connected == 'not connected'" class="connecting" v-bind:style="{ color: connectingErrorColour }">
-                        {{ connected }}
-                    </div>
                     <ul id="messageArea">
                         <template v-for="message in messages">
                             <li v-bind:class="message.cssClass" :key="message.timeStamp">
@@ -70,7 +70,7 @@ export default {
         data () {
         return {
             userName: null,
-            connected: 'not connected',
+            connected: 'Connected',
             connectingErrorColour: 'green',
             showUserPage: true,
             stompClient: null,
@@ -108,7 +108,7 @@ export default {
         onConnected: function(frame) {
             // Subscribe to public topic
             console.log(frame)
-            this.connected = 'connected'
+            this.connected = 'Connected'
             this.stompClient.subscribe(stompSubscribeTopic, (payload) => {this.onMessageReceived(payload)})
         },
         onMessageReceived: function(payload) {
@@ -126,7 +126,7 @@ export default {
             this.messages.push(message)
         },
         onError: function(error) {
-            this.connected = 'Could not connect to WebSocket server. Please refresh this page to try again!'
+            this.connected = 'Could not connect to messaging server. Please <strong>refresh</strong> this page to try again!'
             this.connectingErrorColour = 'red'
             console.log(error)
         },
@@ -241,8 +241,15 @@ export default {
     }
 
     @media only screen and (max-width: 600px) {
-    .chat-container ul {
-        padding: 0;
+        .chat-container ul {
+            padding: 0;
+        }
     }
-}
+    .connecting {
+        margin-top:50px;
+        display: block;
+        padding:10px;
+        color: #fff;
+        background-color:rgb(248, 222, 252);
+    }
 </style>
