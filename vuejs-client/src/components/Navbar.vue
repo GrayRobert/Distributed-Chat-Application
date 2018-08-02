@@ -1,8 +1,13 @@
 <template>
-    <div class="navbar sticky-top">
+    <div class="navbar sticky-top box">
         <ul>
             <li class="left"><a href="#"><menu-icon fillColor="#FF0000" /></a></li>
-            <li class="title"><a href="#">Distributed ChatApp</a></li>
+            <li class="title"><a href="#">
+                <object data="/img/icons/chatappus-379x349-transp.svg" type="image/svg+xml" height="30" style="vertical-align:middle">
+                    <img src="yourfallback.jpg" />
+                </object>
+                <span>ChatAppUs</span>
+                </a></li>
             <li class="right"><a href="#"><account-outline fillColor="#FF0000" /></a></li>
         </ul>
     </div>
@@ -16,6 +21,7 @@
 
 
 <style lang="less">
+
 .navbar {
     background-color: #9b4dca;
     height:30px;
@@ -42,10 +48,14 @@
 }
 
 .navbar .title {
+    font-family: 'Kirang Haerang', cursive;
     float: left;
     margin-left:20px;
-    margin-top:2px;
     font-size: 20px;
+}
+
+.navbar .title span {
+    margin: 0 0 0 10px;
 }
 
 .navbar li a {
@@ -81,6 +91,11 @@
     width:30px;
     bottom:-14px !important;
     right:10px;
+}
+
+.box {
+   display: flex;
+   align-items:center;
 }
  
 </style>
