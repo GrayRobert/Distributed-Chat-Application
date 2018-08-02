@@ -1,0 +1,1 @@
+INSERT INTO chat_message (type,content,sender,recipient,sent,received)VALUES('CHAT', 'Hello World', 'Robert', null, NOW(),NOW());
