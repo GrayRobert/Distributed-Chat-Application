@@ -45,7 +45,7 @@ import SockJS from 'sockjs-client'
 import Stomp from 'stompjs'
 
 // CONSTANTS
-const webSocketEndPoint = '//api.chatappus.com:8443/chat-socket';
+const webSocketEndPoint = '//chatappus.com:8443/chat-socket';
 const stompSendEndPoint = '/app/chat.sendMessage';
 const stompSubscribeTopic = '/topic/public';
 const stompAddUserEndPoint = '/app/chat.addUser';
