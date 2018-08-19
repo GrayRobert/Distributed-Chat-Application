@@ -12,9 +12,9 @@ import java.math.BigInteger;
 import java.util.List;
 
 @Controller
-public class ChatRepositoryController implements IChatRepository {
+public class ChatStorageController implements IChatRepository {
 
-    private static final Logger logger = LoggerFactory.getLogger(ChatRepositoryController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ChatStorageController.class);
 
     @Autowired
     private ChatMessageMapper chatMessageMapper;

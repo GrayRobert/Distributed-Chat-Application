@@ -23,7 +23,7 @@ public class ChatController {
     private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
 
     @Autowired
-    ChatRepositoryController chatRepositoryController;
+    ChatStorageController chatStorageController;
 
     @Autowired
     private SimpMessageSendingOperations messagingTemplate;
@@ -33,7 +33,7 @@ public class ChatController {
     @SendTo("/topic/public")
     public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
         logger.info("Persisting chat message: " + chatMessage.getSender() + " - " + chatMessage.getContent() + "\n");
-        chatRepositoryController.insertChatMessage(chatMessage);
+        chatStorageController.insertChatMessage(chatMessage);
         return chatMessage;
     }
 
@@ -46,7 +46,7 @@ public class ChatController {
         headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
 
         //Resend old messages TODO: Move to seperate queue for new connections
-        List<ChatMessage> oldMessages = chatRepositoryController.getAllChatMessages();
+        List<ChatMessage> oldMessages = chatStorageController.getAllChatMessages();
         for (ChatMessage message:oldMessages) {
             messagingTemplate.convertAndSend("/topic/public", message);
         }

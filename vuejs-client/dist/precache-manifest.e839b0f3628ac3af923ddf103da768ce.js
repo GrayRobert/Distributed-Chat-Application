@@ -1,7 +1,7 @@
 self.__precacheManifest = [
   {
-    "revision": "d0af4007b41b09ba08bbce9e652cd3f3",
-    "url": "/img/platypus.svg"
+    "revision": "3ab762f4e98aa93ff5b44e0f58b64ba7",
+    "url": "/img/safari-pinned-tab.svg"
   },
   {
     "revision": "e8e569f858aa50d47d26842442f91dfe",
@@ -20,20 +20,20 @@ self.__precacheManifest = [
     "url": "/index.html"
   },
   {
-    "revision": "53c274aed5787abc53b45b4653511f53",
-    "url": "/img/favicon-32x32.png"
-  },
-  {
     "revision": "7847957f5d6236332cc037ab5387a012",
     "url": "/img/favicon-16x16.png"
+  },
+  {
+    "revision": "53c274aed5787abc53b45b4653511f53",
+    "url": "/img/favicon-32x32.png"
   },
   {
     "revision": "de59a79b448cb7b34652",
     "url": "/js/chunk-vendors.de59a79b.js"
   },
   {
-    "revision": "3ab762f4e98aa93ff5b44e0f58b64ba7",
-    "url": "/img/safari-pinned-tab.svg"
+    "revision": "d0af4007b41b09ba08bbce9e652cd3f3",
+    "url": "/img/platypus.svg"
   },
   {
     "revision": "d98e9ec5fafad691048cbb603b5b0e71",

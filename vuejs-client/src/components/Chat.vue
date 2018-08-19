@@ -45,23 +45,21 @@ import SockJS from 'sockjs-client'
 import Stomp from 'stompjs'
 
 // CONSTANTS
-const webSocketEndPoint = '//chatappus.com:8443/chat-socket';
+//const webSocketEndPoint = '//chatappus.com:8443/chat-socket';
+const webSocketEndPoint = '//localhost:8090/chat-socket';
 const stompSendEndPoint = '/app/chat.sendMessage';
 const stompSubscribeTopic = '/topic/public';
 const stompAddUserEndPoint = '/app/chat.addUser';
 const userColours = [
-    '#800080','#872187','#9A03FE','#892EE4','#3923D6','#2966B8','#23819C','#BF00BF',
-    '#BC2EBC','#A827FE','#9B4EE9','#6755E3','#2F74D0','#2897B7','#DB00DB','#D54FD5',
-    '#B445FE','#A55FEB','#8678E9','#4985D6','#2FAACE','#F900F9','#DD75DD','#BD5CFE',
-    '#AE70ED','#9588EC','#6094DB','#44B4D5'
+    '#800080', '#B445FE','#A55FEB','#8678E9','#4985D6','#2FAACE','#F900F9','#DD75DD','#BD5CFE','#AE70ED'
 ];
 
-function getAvatarColor(messageSender) {
-    let hash = 0;
+function getUserColour(messageSender) {
+    let colour = 0;
     for (let i = 0; i < messageSender.length; i++) {
-        hash = 31 * hash + messageSender.charCodeAt(i);
+        colour = 10 * colour + messageSender.charCodeAt(i);
     }
-    const index = Math.abs(hash % userColours.length);
+    const index = Math.abs(colour % userColours.length);
     return userColours[index];
 }
 
@@ -121,7 +119,7 @@ export default {
                 message.cssClass = 'event-message'
             } else {
                 message.cssClass = 'chat-message'
-                message.avatarColor = getAvatarColor(message.sender)
+                message.avatarColor = getUserColour(message.sender)
             }
             this.messages.push(message)
         },

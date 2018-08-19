@@ -1,7 +1,7 @@
 {
   "name": "ChatAppUs",
   "short_name": "ChatAppUs",
-  "version": 1.02,
+  "version": 1.03,
   "theme_color": "#9b4dca",
   "background_color": "#9b4dca",
   "display": "fullscreen",

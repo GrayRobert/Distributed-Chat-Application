@@ -11,8 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import java.util.List;
-
 @Controller
 public class WebSocketEventListener {
 
@@ -22,7 +20,7 @@ public class WebSocketEventListener {
     private SimpMessageSendingOperations messagingTemplate;
 
     @Autowired
-    ChatRepositoryController chatRepositoryController;
+    ChatStorageController chatStorageController;
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {

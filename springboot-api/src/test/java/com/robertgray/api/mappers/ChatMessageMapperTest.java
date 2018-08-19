@@ -1,6 +1,6 @@
 package com.robertgray.api.mappers;
 
-import com.robertgray.api.controllers.ChatRepositoryController;
+import com.robertgray.api.controllers.ChatStorageController;
 import com.robertgray.api.models.ChatMessage;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +18,7 @@ import static org.junit.Assert.assertNotNull;
 public class ChatMessageMapperTest {
 
     @Autowired
-    ChatRepositoryController chatRepositoryController;
+    ChatStorageController chatStorageController;
 
     ChatMessage testMessage1;
     ChatMessage testMessage2;
@@ -36,15 +36,15 @@ public class ChatMessageMapperTest {
     }
 
     public void insertTestMessages() {
-        chatRepositoryController.insertChatMessage(testMessage1);
-        chatRepositoryController.insertChatMessage(testMessage2);
-        chatRepositoryController.insertChatMessage(testMessage3);
+        chatStorageController.insertChatMessage(testMessage1);
+        chatStorageController.insertChatMessage(testMessage2);
+        chatStorageController.insertChatMessage(testMessage3);
     }
 
     @Test
     public void getAllMessages() {
         insertTestMessages();
-        List<ChatMessage> messages = chatRepositoryController.getAllChatMessages();
+        List<ChatMessage> messages = chatStorageController.getAllChatMessages();
         assertNotNull(messages);
         printAllMessages(messages);
     }
