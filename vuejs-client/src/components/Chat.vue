@@ -65,7 +65,7 @@ function getUserColour(messageSender) {
 
 export default {
     name: 'chat',
-        data () {
+        data() {
         return {
             userName: null,
             connected: 'Connected',
@@ -73,17 +73,17 @@ export default {
             showUserPage: true,
             stompClient: null,
             messages: [],
+            messageBody: '',
+            retryConnect: 0
         }
     },
     // Important the websocket connection is opened when the component mounts
     created: function() {
-            var socket = new SockJS(webSocketEndPoint);
-            this.stompClient = Stomp.over(socket)
-            //console.log("Connecting to API")
-            this.stompClient.connect({}, (frame)=>{this.onConnected(frame)}, (error)=>{this.onError(error)})
+                this.retryConnect = 1
+                this.connectToAPI()
             },
     methods: {
-        send () {
+        send() {
             console.log("sending message " + this.messageBody)
             if(this.messageBody && this.stompClient) {
                 let chatMessage = {
@@ -95,7 +95,21 @@ export default {
                 this.messageBody = null;
             }
         },
-        login () {
+        connectToAPI: function(timeOut) {
+            console.log("Trying to connect...")
+            if (this.retryConnect > 0) {
+                setTimeout (() => {
+                    let socket = new SockJS(webSocketEndPoint);
+                    this.stompClient = Stomp.over(socket)
+                    //console.log("Connecting to API")
+                    this.stompClient.connect({}, (frame)=>{this.onConnected(frame)}, (error)=>{this.onError(error)})
+                    // Send pings and pongs
+                    this.stompClient.heartbeat.outgoing = 10000
+                    this.stompClient.heartbeat.incoming = 10000
+                }, timeOut)
+            }
+        },
+        login() {
             // Send username to server
             this.stompClient.send(stompAddUserEndPoint, {},
                 JSON.stringify({sender: this.userName, type: 'JOIN'})
@@ -107,6 +121,7 @@ export default {
             // Subscribe to public topic
             console.log(frame)
             this.connected = 'Connected'
+            this.retryConnect = 0
             this.stompClient.subscribe(stompSubscribeTopic, (payload) => {this.onMessageReceived(payload)})
         },
         onMessageReceived: function(payload) {
@@ -124,10 +139,15 @@ export default {
             this.messages.push(message)
         },
         onError: function(error) {
-            this.connected = 'Could not connect to messaging server. Please <strong>refresh</strong> this page to try again!'
+            this.connected = 'Trying to establish connection to messaging server...'
             this.connectingErrorColour = 'red'
             console.log(error)
-        },
+            this.retryConnect = 1
+            setTimeout (() => {
+                console.log("Reconnecting in 1 second...")
+                this.connectToAPI(5000)
+            }, 1000)
+            },
     }
 }
 </script>
