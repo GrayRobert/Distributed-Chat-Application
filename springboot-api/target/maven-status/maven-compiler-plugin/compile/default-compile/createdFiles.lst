@@ -1,6 +1,5 @@
 com/robertgray/api/Application.class
 com/robertgray/api/models/ChatMessage$MessageType.class
-com/robertgray/api/controllers/ChatRepositoryController.class
 com/robertgray/api/controllers/WebSocketEventListener.class
 com/robertgray/api/mappers/ChatMessageMapper.class
 com/robertgray/api/interfaces/IChatRepository.class
