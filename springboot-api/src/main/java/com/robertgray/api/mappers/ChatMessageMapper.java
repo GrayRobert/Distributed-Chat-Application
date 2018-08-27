@@ -13,15 +13,15 @@ import java.util.List;
 @Component
 public interface ChatMessageMapper {
 
-    @Select("SELECT * FROM chat_message")
+    @Select("SELECT id,type,content,sender,recipient,sent,received,hash FROM chat_message ORDER BY sent ASC, id")
     public List<ChatMessage> findAllMessages();
 
-    @Select("SELECT * FROM chat_message WHERE id = #{id}")
+    @Select("SELECT id,type,content,sender,recipient,sent,received,hash FROM chat_message WHERE id = #{id}")
     public ChatMessage findMessageById(BigInteger id);
 
     @Insert("INSERT INTO chat_message " +
-            "(type,content,sender,recipient,sent,received)" +
-            "VALUES(#{type}, #{content}, #{sender}, #{recipient}, #{sent}, #{received});")
+            "(type,content,sender,recipient,sent,received,hash)" +
+            "VALUES(#{type}, #{content}, #{sender}, #{recipient}, #{sent}, #{received}, #{hash});")
     public int insertMessage(ChatMessage message);
 
     @Update("UPDATE chat_message " +
@@ -30,7 +30,8 @@ public interface ChatMessageMapper {
             "sender=#{sender}," +
             "recipient=#{recipient}," +
             "sent=#{sent}," +
-            "received=#{received}" +
+            "received=#{received}," +
+            "hash=#{hash}" +
             "WHERE id=#{id};")
     public int updateMessage(ChatMessage message);
 

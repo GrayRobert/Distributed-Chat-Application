@@ -46,9 +46,31 @@ public class ChatController {
         headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
 
         //Resend old messages TODO: Move to seperate queue for new connections
-        List<ChatMessage> oldMessages = chatStorageController.getAllChatMessages();
-        for (ChatMessage message:oldMessages) {
-            messagingTemplate.convertAndSend("/topic/public", message);
+        //List<ChatMessage> oldMessages = chatStorageController.getAllChatMessages();
+        //for (ChatMessage message:oldMessages) {
+        //    messagingTemplate.convertAndSend("/topic/public", message);
+        //}
+        return chatMessage;
+    }
+
+    @CrossOrigin(origins = { "http://localhost:8080", "http://localhost:8090" }, maxAge = 6000)
+    @MessageMapping("/chat.getMissedMessages")
+    @SendTo("/topic/public")
+    public ChatMessage getMissedMessages(@Payload ChatMessage chatMessage,
+                               SimpMessageHeaderAccessor headerAccessor) {
+
+        String sender = chatMessage.getSender();
+
+        if(sender !=null) {
+            // Add username in web socket session
+            headerAccessor.getSessionAttributes().put("username", sender);
+
+            //Resend missed messages to sender
+            List<ChatMessage> oldMessages = chatStorageController.getAllChatMessages();
+            for (ChatMessage message:oldMessages) {
+                message.setRecipient(chatMessage.getSender());
+                messagingTemplate.convertAndSend("/topic/public", message);
+            }
         }
         return chatMessage;
     }

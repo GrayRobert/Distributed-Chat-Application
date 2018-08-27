@@ -14,11 +14,20 @@
                 </div>
                 <div id="chat-page" v-else class="chat-container">
                     <ul id="messageArea">
-                        <template v-for="message in messages">
+                        <template v-for="message in orderedMessages">
                             <li v-bind:class="message.cssClass" :key="message.timeStamp">
                                 <i v-if="message.type === 'CHAT'" v-bind:style="'background-color: ' + message.avatarColor">{{message.sender[0]}}</i>
-                                <span>{{message.sender}}</span>
+                                <span v-if="message.type === 'CHAT'">{{message.sender}}</span>
                                 <p>{{ message.content }}</p>
+                                <span class="time">{{message.sent | moment("dddd, MMMM Do YYYY HH:mm:ss") }} <span v-if="message.type === 'CHAT'" class="tick-green">✓</span></span>
+                            </li>
+                        </template>
+                        <template v-for="message in filteredUnsentMessages">
+                            <li v-bind:class="message.cssClass" :key="message.timeStamp">
+                                <i v-if="message.type === 'CHAT'" v-bind:style="'background-color: ' + message.avatarColor">{{message.sender[0]}}</i>
+                                <span v-if="message.type === 'CHAT'">{{message.sender}}</span>
+                                <p>{{ message.content }}</p>
+                                <span class="time">{{message.sent | moment("dddd, MMMM Do YYYY HH:mm:ss") }} <span v-if="message.type === 'CHAT'" class="tick-orange">✓</span></span>
                             </li>
                         </template>
                     </ul>
@@ -41,19 +50,26 @@
 </template>
 
 <script>
+//----------> IMPORTS <----------//
 import SockJS from 'sockjs-client'
 import Stomp from 'stompjs'
+import _ from 'lodash'
+import md5 from 'md5'
 
-// CONSTANTS
-//const webSocketEndPoint = '//chatappus.com:8443/chat-socket';
-const webSocketEndPoint = '//localhost:8090/chat-socket';
-const stompSendEndPoint = '/app/chat.sendMessage';
-const stompSubscribeTopic = '/topic/public';
-const stompAddUserEndPoint = '/app/chat.addUser';
+
+//----------> CONSTANTS <----------//
+//const webSocketEndPoint = '//chatappus.com:8443/chat-socket'
+const webSocketEndPoint = '//localhost:8090/chat-socket'
+const stompSendEndPoint = '/app/chat.sendMessage'
+const stompSubscribeTopic = '/topic/public'
+const stompAddUserEndPoint = '/app/chat.addUser'
+const stompMissedMessagesEndPoint = '/app/chat.getMissedMessages'
 const userColours = [
     '#800080', '#B445FE','#A55FEB','#8678E9','#4985D6','#2FAACE','#F900F9','#DD75DD','#BD5CFE','#AE70ED'
-];
+]
 
+
+//----------> SOME HELPER FUNCTIONS <----------//
 function getUserColour(messageSender) {
     let colour = 0;
     for (let i = 0; i < messageSender.length; i++) {
@@ -62,7 +78,21 @@ function getUserColour(messageSender) {
     const index = Math.abs(colour % userColours.length);
     return userColours[index];
 }
+//Source: https://stackoverflow.com/questions/1988349/array-push-if-does-not-exist/24001122
+Array.prototype.inArray = function(comparer) { 
+    for(var i=0; i < this.length; i++) { 
+        if(comparer(this[i])) return true; 
+    }
+    return false; 
+};
+Array.prototype.pushIfNotExist = function(element, comparer) { 
+    if (!this.inArray(comparer)) {
+        this.push(element);
+    }
+};
 
+
+//----------> VUE <----------//
 export default {
     name: 'chat',
         data() {
@@ -73,26 +103,111 @@ export default {
             showUserPage: true,
             stompClient: null,
             messages: [],
+            resendMessages: [],
             messageBody: '',
-            retryConnect: 0
+            retryConnect: 0,
+            bottom: 'bottom'
         }
     },
-    // Important the websocket connection is opened when the component mounts
+    computed: {
+        //----------> Order Message By Sent Time <----------//
+        orderedMessages: function () {
+            return _.orderBy(this.messages, 'sent')
+        },
+        filteredUnsentMessages: function () {
+            // To Do: REVIEW BETTER ALTERNATIVE
+            if(this.retryConnect > 0) {
+                return _.orderBy(this.resendMessages, 'sent')
+            } else {
+                return null
+            }
+        }
+    },
+    //----------> Open Connection To API as Page Mounts <----------//
     created: function() {
                 this.retryConnect = 1
                 this.connectToAPI()
             },
     methods: {
         send() {
-            console.log("sending message " + this.messageBody)
-            if(this.messageBody && this.stompClient) {
+            if(this.messageBody) {
+
+                //----------> Get message ready to send <----------//
                 let chatMessage = {
                     sender: this.userName,
                     content: this.messageBody,
+                    sent: new Date(),
                     type: 'CHAT'
-                };
-                this.stompClient.send(stompSendEndPoint, {}, JSON.stringify(chatMessage));
+                }
+
+                // create unique hash of message for verification
+                let messageHash = md5(chatMessage.sender+chatMessage.content+chatMessage.sent.toString+chatMessage.type)
+                chatMessage.hash = messageHash
+                
+                //----------> start a transaction <----------//
+                let tx = this.stompClient.begin();
+                this.stompClient.send(stompSendEndPoint, {transaction: tx.id}, JSON.stringify(chatMessage));
+                console.log("sending message " + this.messageBody)
+
+                //----------> commit the transaction if we still have a connection <----------//
+                if(this.retryConnect == 0) {
+                    tx.commit();
+                    console.log("Transaction commited")
+                } else {
+                    tx.abort();
+                    console.log("Transaction aborted")
+                    //----------> Store messages and send later <----------//
+                    chatMessage.cssClass = 'chat-message'
+                    chatMessage.avatarColor = getUserColour(chatMessage.sender)
+                    this.resendMessages.push(chatMessage)
+                }
+                //----------> end transaction <----------//
                 this.messageBody = null;
+                window.scrollTo(0,document.body.scrollHeight+1000);
+            }
+        },
+        reSendMessages() {
+            if(this.retryConnect == 0 && this.resendMessages.length > 0) {
+                console.log("Retrying Messages: ")
+                const resendChatMessages = this.resendMessages
+
+                try {
+                    for (const key of Object.keys(resendChatMessages)) {
+                        //----------> start a transaction <----------//
+                        let tx = this.stompClient.begin();
+                        console.log("Re-sending messages: " + key, resendChatMessages[key]);
+                        this.stompClient.send(stompSendEndPoint, {transaction: tx.id}, JSON.stringify(resendChatMessages[key]));
+                        //----------> commit the transaction if we still have a connection <----------//
+                        if(this.retryConnect == 0) {
+                            console.log("Transaction commited")
+                            tx.commit();
+                        } else {
+                            console.log("Transaction aborted")
+                            tx.abort();
+                        }
+                        //----------> end transaction <----------//
+                    }
+                    this.resendMessages = []
+                } catch(e) {
+                    console.log("Could not re-send messages: " + e)
+                }
+                
+            }
+        },
+        getMissedMessages() {
+            //----------> start a transaction <----------//
+            let tx = this.stompClient.begin();
+            // Send username to server
+            this.stompClient.send(stompMissedMessagesEndPoint, {transaction: tx.id},
+                JSON.stringify({sender: this.userName, type: 'MISSED_MESSAGES', sent: new Date()})
+            )
+            //----------> commit the transaction if we still have a connection <----------//
+            if(this.retryConnect == 0) {
+                console.log("Transaction commited")
+                tx.commit();
+            } else {
+                console.log("Transaction aborted")
+                tx.abort();
             }
         },
         connectToAPI: function(timeOut) {
@@ -104,28 +219,52 @@ export default {
                     //console.log("Connecting to API")
                     this.stompClient.connect({}, (frame)=>{this.onConnected(frame)}, (error)=>{this.onError(error)})
                     // Send pings and pongs
-                    this.stompClient.heartbeat.outgoing = 10000
-                    this.stompClient.heartbeat.incoming = 10000
+                    //this.stompClient.heartbeat.outgoing = 10000
+                    //this.stompClient.heartbeat.incoming = 10000
                 }, timeOut)
             }
         },
         login() {
+            //----------> start a transaction <----------//
+            let tx = this.stompClient.begin();
             // Send username to server
-            this.stompClient.send(stompAddUserEndPoint, {},
-                JSON.stringify({sender: this.userName, type: 'JOIN'})
+            this.stompClient.send(stompAddUserEndPoint, {transaction: tx.id},
+                JSON.stringify({sender: this.userName, type: 'JOIN', sent: new Date()})
             )
+            //----------> commit the transaction if we still have a connection <----------//
+            if(this.retryConnect == 0) {
+                console.log("Transaction commited")
+                tx.commit();
+            } else {
+                console.log("Transaction aborted")
+                tx.abort();
+            }
+            //----------> end transaction <----------//
             // Hide the user page ToDO: Make conditional...
             this.showUserPage = false
+            this.getMissedMessages()
         },
         onConnected: function(frame) {
             // Subscribe to public topic
             console.log(frame)
             this.connected = 'Connected'
             this.retryConnect = 0
+            //----------> Resent Unsent Messages <----------//
+            this.reSendMessages()
+            //----------> Get Missed Messages <----------//
+            if(this.userName !=null) {
+                this.getMissedMessages()
+            }
             this.stompClient.subscribe(stompSubscribeTopic, (payload) => {this.onMessageReceived(payload)})
         },
         onMessageReceived: function(payload) {
             let message = JSON.parse(payload.body)
+
+            //Check if we already have this message
+            if(message.id != null) {
+                console.log("The message id is: " + message.id)
+            }
+
             if(message.type === 'JOIN') {
                 message.content = message.sender + ' joined!'
                 message.cssClass = 'event-message'
@@ -136,7 +275,19 @@ export default {
                 message.cssClass = 'chat-message'
                 message.avatarColor = getUserColour(message.sender)
             }
-            this.messages.push(message)
+
+            //----------> Show messages for this client or broadcast mesages <----------//
+            if(message.recipient === this.userName && message.type === 'CHAT') {
+                console.log(message.recipient)
+                this.messages.pushIfNotExist(message, function(e) { 
+                    return e.hash === message.hash; 
+                });
+            } else if (message.recipient === null && message.content != null) {
+                this.messages.push(message)
+            } else {
+                return
+            }
+            window.scrollTo(0,document.body.scrollHeight+1000);
         },
         onError: function(error) {
             this.connected = 'Trying to establish connection to messaging server...'
@@ -147,7 +298,7 @@ export default {
                 console.log("Reconnecting in 1 second...")
                 this.connectToAPI(5000)
             }, 1000)
-            },
+        }
     }
 }
 </script>
@@ -171,9 +322,11 @@ export default {
         margin-right: auto;
         background-color: #fff;
         margin-top: 30px;
+        margin-bottom:30px;
         height: calc(100%);
         position: relative;
         padding:30px 30px 0px 30px;
+        overflow-y: scroll;
     }
 
     .chat-container .event-message {
@@ -199,6 +352,21 @@ export default {
     .chat-message {
         padding:20px;
         top:5px;
+    }
+
+    .time {
+        font-size: 10px;
+        color:#777 !important;
+    }
+
+    .tick-orange {
+        color: orange !important;
+        font-size: 14px;
+    }
+
+    .tick-green {
+        color: green !important;
+        font-size: 14px;
     }
 
     .chat-container ul li {

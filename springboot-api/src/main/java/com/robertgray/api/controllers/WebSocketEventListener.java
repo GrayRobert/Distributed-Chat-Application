@@ -11,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import java.util.Date;
+
 @Controller
 public class WebSocketEventListener {
 
@@ -37,6 +39,7 @@ public class WebSocketEventListener {
 
             ChatMessage chatMessage = new ChatMessage();
             chatMessage.setType(ChatMessage.MessageType.LEAVE);
+            chatMessage.setSent(new Date()); //To do Time Sync Controller
             chatMessage.setSender(username);
 
             //Send the message to the broadcast channel

@@ -5,10 +5,12 @@ import "vue-material-design-icons/styles.css"
 
 import MenuIcon from "vue-material-design-icons/menu.vue"
 import UserIcon from "vue-material-design-icons/account-outline.vue"
+import VueMoment from "vue-moment"
 
 Vue.component("menu-icon", MenuIcon)
 Vue.component("account-outline", UserIcon)
 
+Vue.use(VueMoment);
 
 Vue.config.productionTip = false
 
