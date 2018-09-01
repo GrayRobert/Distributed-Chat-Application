@@ -10,19 +10,23 @@ public class ChatMessage {
     private String sender;
     private String recipient;
     private Date sent;
+    private Date reSent;
     private Date received;
+    private BigInteger lastMessageId;
     private String hash;
+
 
     public enum MessageType {
         CHAT,
         JOIN,
         LEAVE,
-        MISSED_MESSAGES
+        MISSED_MESSAGES,
+        TIME
     }
 
     public ChatMessage(){}
 
-    public ChatMessage(MessageType type, String content, String sender, String recipient, Date sent, Date received) {
+    public ChatMessage(MessageType type, String content, String sender, String recipient, Date sent, Date received, BigInteger lastMessageId, String hash) {
         this.id = id;
         this.type = type;
         this.content = content;
@@ -30,6 +34,8 @@ public class ChatMessage {
         this.recipient = recipient;
         this.sent = sent;
         this.received = received;
+        this.lastMessageId = lastMessageId;
+        this.hash = hash;
     }
 
     public BigInteger getId() { return id; }
@@ -68,9 +74,17 @@ public class ChatMessage {
 
     public void setSent(Date sent) { this.sent = sent; }
 
+    public Date getReSent() { return reSent; }
+
+    public void setReSent(Date reSent) { this.reSent = reSent; }
+
     public Date getReceived() { return received; }
 
     public void setReceived(Date received) { this.received = received; }
+
+    public BigInteger getLastMessageId() { return lastMessageId; }
+
+    public void setLastMessageId(BigInteger lastMessageId) { this.lastMessageId = lastMessageId; }
 
     public String getHash() { return hash; }
 

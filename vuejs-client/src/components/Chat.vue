@@ -60,6 +60,7 @@ import md5 from 'md5'
 
 //----------> CONSTANTS <----------//
 //const webSocketEndPoint = '//chatappus.com:8443/chat-socket'
+//const clientApiTimeOut = 60000; //Time out before API will kick the client off
 const webSocketEndPoint = 'ws://localhost:8090/chat-socket'
 const stompSendEndPoint = '/app/chat.sendMessage'
 const stompSubscribeTopic = '/topic/public'
@@ -107,27 +108,39 @@ export default {
             messages: [],
             resendMessages: [],
             messageBody: '',
-            retryConnect: false,
+            isConnected: false,
             bottom: 'bottom'
         }
     },
     computed: {
         //----------> Order Message By Sent Time <----------//
         orderedMessages: function () {
-            return _.orderBy(this.messages, 'sent')
+            return _.orderBy(this.messages, 'sent', 'ASC')
+        },
+        //----------> Order Messages to be resent by sent <----------//
+        orderedResendMessages: function () {
+            return _.orderBy(this.resendMessages, 'sent', 'ASC')
         },
         filteredUnsentMessages: function () {
+            // Show unsent messages list if we are not connected
             // To Do: REVIEW BETTER ALTERNATIVE
-            if(this.retryConnect) {
-                return _.orderBy(this.resendMessages, 'sent')
+            if(!this.isConnected) {
+                return _.orderBy(this.resendMessages, 'sent', 'ASC')
             } else {
                 return null
             }
+        },
+        getLastChatMessage: function () {
+            // Return Last Chat Message
+                let orderedChatMessages = _.map(this.orderedMessages, function(o) {
+                    if (o.type == "CHAT") return o
+                })
+                orderedChatMessages = _.without(orderedChatMessages, undefined)
+                return _.last(orderedChatMessages)
         }
     },
     //----------> Open Connection To API as Page Mounts <----------//
     created: function() {
-                this.retryConnect = true
                 this.connectToAPI()
             },
     methods: {
@@ -135,29 +148,35 @@ export default {
             if(this.messageBody) {
 
                 //----------> Get message ready to send <----------//
+                console.log("Last message is: " + this.getLastChatMessage.id)
+
                 let chatMessage = {
                     sender: this.userName,
                     content: this.messageBody,
                     sent: new Date(),
-                    type: 'CHAT'
+                    type: 'CHAT',
+                    hash: '',
+                    lastMessageId: this.getLastChatMessage.id
                 }
 
-                // create unique hash of message for verification
+                // create unique hash of message for verification and deduplication
                 let messageHash = md5(chatMessage.sender+chatMessage.content+chatMessage.sent.toString()+chatMessage.type+Math.random())
                 chatMessage.hash = messageHash
                 
                 //----------> start a transaction <----------//
-                let tx = this.stompClient.begin();
-                this.stompClient.send(stompSendEndPoint, {transaction: tx.id}, JSON.stringify(chatMessage));
+                let tx = this.stompClient.begin()
+
+                //----------> send message <----------//
+                this.stompClient.send(stompSendEndPoint, {transaction: tx.id}, JSON.stringify(chatMessage))
                 console.log("sending message " + this.messageBody)
 
                 //----------> commit the transaction if we still have a connection <----------//
-                if(!this.retryConnect) {
+                if(this.isConnected) {
                     tx.commit();
-                    console.log("Transaction commited")
+                    console.log("Transaction commited, with id: " + tx.id)
                 } else {
                     tx.abort();
-                    console.log("Transaction aborted")
+                    console.log("Transaction aborted, with id: " + tx.id)
                     //----------> Store messages and send later <----------//
                     chatMessage.cssClass = 'chat-message'
                     chatMessage.avatarColor = getUserColour(chatMessage.sender)
@@ -165,26 +184,28 @@ export default {
                 }
                 //----------> end transaction <----------//
                 this.messageBody = null;
-                window.scrollTo(0,document.body.scrollHeight+1000);
+                window.scrollTo(0,document.body.scrollHeight+1000)
             }
         },
         reSendMessages() {
-            if(!this.retryConnect && this.resendMessages.length > 0) {
+            if(this.isConnected && this.resendMessages.length > 0) {
                 console.log("Retrying Messages: ")
-                const resendChatMessages = this.resendMessages
+                const resendChatMessages = this.orderedResendMessages
 
                 try {
                     for (const key of Object.keys(resendChatMessages)) {
                         //----------> start a transaction <----------//
                         let tx = this.stompClient.begin();
                         console.log("Re-sending messages: " + key, resendChatMessages[key]);
-                        this.stompClient.send(stompSendEndPoint, {transaction: tx.id}, JSON.stringify(resendChatMessages[key]));
+                        let chatMessage = resendChatMessages[key]
+                        chatMessage.reSent = new Date();
+                        this.stompClient.send(stompSendEndPoint, {transaction: tx.id}, JSON.stringify(chatMessage))
                         //----------> commit the transaction if we still have a connection <----------//
-                        if(!this.retryConnect) {
-                            console.log("Transaction commited")
+                        if(this.isConnected) {
+                            console.log("Transaction commited, with id: " + tx.id)
                             tx.commit();
                         } else {
-                            console.log("Transaction aborted")
+                            console.log("Transaction aborted, with id: " + tx.id)
                             tx.abort();
                         }
                         //----------> end transaction <----------//
@@ -204,37 +225,25 @@ export default {
                 JSON.stringify({sender: this.userName, type: 'MISSED_MESSAGES', sent: new Date()})
             )
             //----------> commit the transaction if we still have a connection <----------//
-            if(!this.retryConnect) {
-                console.log("Transaction commited")
+            if(this.isConnected) {
+                console.log("Transaction commited, with id: " + tx.id)
                 tx.commit();
             } else {
-                console.log("Transaction aborted")
+                console.log("Transaction aborted, with id: " + tx.id)
                 tx.abort();
             }
         },
-        connectToAPI: function(timeOut) {
-            console.log("Trying to connect..." + this.retryConnect)
-            if (this.retryConnect) {
-                setTimeout (() => {
-                    try {
-                        this.stompClient = StompWebsocket.client(webSocketEndPoint)
-                        this.stompClient.connect({}, (frame)=>{this.onConnected(frame)}, (error)=>{this.onError(error)})
-                        
-                        
-                        //this.socket = new SockJS(webSocketEndPoint)
-                        //this.stompClient = Stomp.over(this.socket)
-                        //console.log("Connecting to API")
-                        //this.stompClient.connect({}, (frame)=>{this.onConnected(frame)}, (error)=>{this.onError(error)})
-                        // Send pings and pongs
-                        //this.stompClient.heartbeat.outgoing = 10000
-                        //this.stompClient.heartbeat.incoming = 10000
-                        this.stompClient.reconnect_delay = 10000;
-                    } catch(e) {
-                        console.log("Coundn't connect to API " + e)
-                    }
-                    
-
-                }, timeOut)
+        connectToAPI: function() {
+            if(!this.isConnected) {
+                try {
+                    this.stompClient = StompWebsocket.client(webSocketEndPoint)
+                    this.stompClient.heartbeat.outgoing = 0;
+                    this.stompClient.heartbeat.incoming = 20000;
+                    this.stompClient.connect({}, (frame)=>{this.onConnected(frame)}, (error)=>{this.onError(error)})
+                    this.stompClient.reconnect_delay = 5000;
+                } catch(e) {
+                    console.log("Coundn't connect to API " + e)
+                }
             }
         },
         login() {
@@ -245,12 +254,12 @@ export default {
                 JSON.stringify({sender: this.userName, type: 'JOIN', sent: new Date()})
             )
             //----------> commit the transaction if we still have a connection <----------//
-            if(!this.retryConnect) {
+            if(this.isConnected) {
                 tx.commit();
-                console.log("Transaction commited")
+                console.log("Transaction commited, with id: " + tx.id)
             } else {
                 tx.abort();
-                console.log("Transaction aborted")
+                console.log("Transaction aborted, with id: " + tx.id)
             }
             //----------> end transaction <----------//
             // Hide the user page ToDO: Make conditional...
@@ -258,25 +267,20 @@ export default {
             this.getMissedMessages()
         },
         onConnected: function(frame) {
-            // Subscribe to public topic
             console.log("Connected Frame is: " + frame)
             this.connected = 'Connected'
-            this.retryConnect = false
-            //----------> Resent Unsent Messages <----------//
+            this.isConnected = true
+            //----------> Resend Unsent Messages <----------//
             this.reSendMessages()
             //----------> Get Missed Messages <----------//
             if(this.userName !=null) {
                 this.getMissedMessages()
             }
+            //----------> Subscribe to braodcast channel <----------//
             this.stompClient.subscribe(stompSubscribeTopic, (payload) => {this.onMessageReceived(payload)})
         },
         onMessageReceived: function(payload) {
             let message = JSON.parse(payload.body)
-
-            //Check if we already have this message
-            if(message.id != null) {
-                console.log("The message id is: " + message.id)
-            }
 
             if(message.type === 'JOIN') {
                 message.content = message.sender + ' joined!'
@@ -289,28 +293,34 @@ export default {
                 message.avatarColor = getUserColour(message.sender)
             }
 
+            if(message.recipient === this.userName && message.type === 'TIME') {
+                message.cssClass = 'event-message'
+                this.messages.push(message)
+            }
+
             //----------> Show messages for this client or broadcast mesages <----------//
             if(message.recipient === this.userName && message.type === 'CHAT') {
-                console.log(message.recipient)
-                this.messages.pushIfNotExist(message, function(e) { 
-                    return e.hash === message.hash; 
-                });
+                if (!message.hash) {
+                    this.messages.pushIfNotExist(message, function(e) { 
+                        return e.id === message.id; 
+                    });
+                } else {
+                    this.messages.pushIfNotExist(message, function(e) { 
+                        return e.hash === message.hash; 
+                    });
+                }
             } else if (message.recipient === null && message.content != null) {
                 this.messages.push(message)
-            } else {
-                return
             }
+
+            //----------> Supposed to always scroll to the bottom: FIX <----------//
             window.scrollTo(0,document.body.scrollHeight+1000);
         },
         onError: function(error) {
             this.connected = 'Trying to establish connection to messaging server...'
             this.connectingErrorColour = 'red'
             console.log(error)
-            this.retryConnect = true
-            setTimeout (() => {
-                console.log("Reconnecting in 1 second...")
-                //this.connectToAPI(5000)
-            }, 1000)
+            this.isConnected = false
         }
     }
 }

@@ -11,6 +11,8 @@ public interface IChatRepository {
 
     ChatMessage getChatMessageById(BigInteger id);
 
+    ChatMessage getChatMessageByHash(String hash);
+
     int insertChatMessage(ChatMessage message);
 
     int updateChatMessage(ChatMessage message);

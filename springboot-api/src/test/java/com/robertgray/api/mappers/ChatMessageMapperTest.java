@@ -28,11 +28,11 @@ public class ChatMessageMapperTest {
     @Before
     public void initialize() {
         testMessage1 = new ChatMessage(ChatMessage.MessageType.CHAT, "TEST MESSAGE 1",
-                "Sender 1", "Recipient 1", new Date(), null);
+                "Sender 1", "Recipient 1", new Date(), null, null,"ABCD123");
         testMessage2 = new ChatMessage(ChatMessage.MessageType.CHAT, "TEST MESSAGE 2",
-                "Sender 2", null, new Date(), null);
+                "Sender 2", null, new Date(), null,null,"BCDA123");
         testMessage3 = new ChatMessage(ChatMessage.MessageType.CHAT, null,
-                "Sender 3", "Recipient 3", new Date(), null);
+                "Sender 3", "Recipient 3", new Date(), null,null,"BCDA123");
     }
 
     public void insertTestMessages() {

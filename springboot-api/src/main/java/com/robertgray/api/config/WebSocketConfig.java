@@ -18,7 +18,9 @@ public class WebSocketConfig extends WebSocketMessageBrokerConfigurationSupport 
     public void configureMessageBroker(final MessageBrokerRegistry config) {
         config.enableStompBrokerRelay("/topic") //
                 .setRelayHost("localhost") //
-                .setRelayPort(61613);
+                .setRelayPort(61613)
+                .setSystemHeartbeatSendInterval(10000)
+                .setSystemHeartbeatReceiveInterval(10000);
         config.setApplicationDestinationPrefixes("/app");
     }
 
@@ -32,6 +34,7 @@ public class WebSocketConfig extends WebSocketMessageBrokerConfigurationSupport 
     public BrokerService broker() throws Exception {
         final BrokerService broker = new BrokerService();
         broker.addConnector("stomp://localhost:61613");
+        broker.setPersistent(true);
 
         broker.setPersistent(false);
         final ManagementContext managementContext = new ManagementContext();

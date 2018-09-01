@@ -7,5 +7,6 @@ CREATE TABLE IF NOT EXISTS chat_message (
   recipient varchar(255),
   sent datetime,
   received datetime,
+  lastMessageId bigint,
   hash varchar(255)
 );

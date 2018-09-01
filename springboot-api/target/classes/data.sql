@@ -1,1 +1,1 @@
-MERGE INTO chat_message KEY (id) VALUES(1,'CHAT', 'Welcome to the group chat', 'Moderator', null, NOW(),NOW(), null);
+MERGE INTO chat_message KEY (id) VALUES(1,'CHAT', 'Welcome to the group chat', 'Moderator', null, NOW(),NOW(), null, null);
