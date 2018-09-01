@@ -115,7 +115,19 @@ export default {
     computed: {
         //----------> Order Message By Sent Time <----------//
         orderedMessages: function () {
-            return _.orderBy(this.messages, 'sent', 'ASC')
+            // first order message by ascending sent time
+            let messages = _.orderBy(this.messages, 'sent', 'ASC')
+
+            messages.sort(function (message1, message2) {
+            // If the first item has a higher number, move it down
+            // If the first item has a lower number, move it up
+            if (message2.lastMessageId == message1.lastMessageId) return 0;
+            if (message2.lastMessageId > message1.id) return -1;
+            if (message2.lastMessageId < message1.id) return 1;
+            if (message2.id > message1.id) return -1;
+            if (message2.id < message1.id) return 1;
+            });
+            return messages
         },
         //----------> Order Messages to be resent by sent <----------//
         orderedResendMessages: function () {
@@ -237,8 +249,8 @@ export default {
             if(!this.isConnected) {
                 try {
                     this.stompClient = StompWebsocket.client(webSocketEndPoint)
-                    this.stompClient.heartbeat.outgoing = 0;
-                    this.stompClient.heartbeat.incoming = 20000;
+                    this.stompClient.heartbeat.outgoing = 10000;
+                    this.stompClient.heartbeat.incoming = 10000;
                     this.stompClient.connect({}, (frame)=>{this.onConnected(frame)}, (error)=>{this.onError(error)})
                     this.stompClient.reconnect_delay = 5000;
                 } catch(e) {

@@ -55,16 +55,18 @@ public class ChatController {
             logger.info("Persisting chat message: " + chatMessage.getSender() + " - " + chatMessage.getContent() + " - " + headerAccessor.toString() + "\n");
             success = chatStorageController.insertChatMessage(chatMessage);
             storedMessage = chatStorageController.getChatMessageByHash(chatMessage.getHash());
+
+            //Only broadcast the message if we successfully store it.
+            if (success > 0) {
+                return storedMessage; //return the stored message as want the ID and to ensure consistency
+            } else {
+                return getFailureMessage(chatMessage); //return failure message
+            }
         } finally {
             lock.unlock(); //release the lock
         }
 
-        //Only broadcast the message if we successfully store it.
-        if (success > 0) {
-            return storedMessage; //return the stored message as want the ID and to ensure consistency
-        } else {
-            return getFailureMessage(chatMessage); //return failure message
-        }
+
 
     }
 

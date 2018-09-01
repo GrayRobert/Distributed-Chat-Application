@@ -1385,3 +1385,9 @@ Caused by: java.lang.IllegalStateException: The file is locked: nio:/Users/rober
 2018-09-01 13:37:05 jdbc[13]: exception
 org.h2.jdbc.JdbcSQLException: Timeout trying to lock table ; SQL statement:
 MERGE INTO chat_message KEY (id) VALUES(1,'CHAT', 'Welcome to the group chat', 'Moderator', null, NOW(),NOW(), null, null) [50200-197]
+2018-09-01 21:44:35 jdbc[92]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "TRUNCATE CHAT_MESSAGE[*] "; expected "TABLE"; SQL statement:
+TRUNCATE chat_message [42001-197]
+2018-09-01 21:44:45 jdbc[92]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "SELECT * FROM[*]"; expected "identifier"; SQL statement:
+SELECT * FROM [42001-197]
