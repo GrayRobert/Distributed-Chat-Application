@@ -1,7 +1,7 @@
 self.__precacheManifest = [
   {
-    "revision": "3ab762f4e98aa93ff5b44e0f58b64ba7",
-    "url": "/img/safari-pinned-tab.svg"
+    "revision": "d0af4007b41b09ba08bbce9e652cd3f3",
+    "url": "/img/platypus.svg"
   },
   {
     "revision": "e8e569f858aa50d47d26842442f91dfe",
@@ -12,11 +12,11 @@ self.__precacheManifest = [
     "url": "/img/mstile-150x150.png"
   },
   {
-    "revision": "806fa478b56b85e08955",
-    "url": "/js/app.806fa478.js"
+    "revision": "cb302fc0c9d67ca4c2e8",
+    "url": "/js/app.cb302fc0.js"
   },
   {
-    "revision": "9d069a0073e73ebbfa664001df03f3ae",
+    "revision": "21680e4447485a30b578649e2f69e36a",
     "url": "/index.html"
   },
   {
@@ -28,12 +28,12 @@ self.__precacheManifest = [
     "url": "/img/favicon-32x32.png"
   },
   {
-    "revision": "de59a79b448cb7b34652",
-    "url": "/js/chunk-vendors.de59a79b.js"
+    "revision": "339e9aa0bc4ce04bbd57",
+    "url": "/js/chunk-vendors.339e9aa0.js"
   },
   {
-    "revision": "d0af4007b41b09ba08bbce9e652cd3f3",
-    "url": "/img/platypus.svg"
+    "revision": "3ab762f4e98aa93ff5b44e0f58b64ba7",
+    "url": "/img/safari-pinned-tab.svg"
   },
   {
     "revision": "d98e9ec5fafad691048cbb603b5b0e71",
@@ -48,11 +48,11 @@ self.__precacheManifest = [
     "url": "/img/android-chrome-192x192.png"
   },
   {
-    "revision": "de59a79b448cb7b34652",
+    "revision": "339e9aa0bc4ce04bbd57",
     "url": "/css/chunk-vendors.43369001.css"
   },
   {
-    "revision": "806fa478b56b85e08955",
-    "url": "/css/app.015a94c8.css"
+    "revision": "cb302fc0c9d67ca4c2e8",
+    "url": "/css/app.4d41af9d.css"
   }
 ];
