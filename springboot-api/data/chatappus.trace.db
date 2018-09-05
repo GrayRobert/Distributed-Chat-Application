@@ -1526,3 +1526,12 @@ Caused by: java.lang.IllegalStateException: The file is locked: nio:/Users/rober
 	at org.h2.mvstore.FileStore.open(FileStore.java:173)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:350)
 	... 119 more
+2018-09-05 21:22:32 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "DELETE *[*] FROM CHAT_MESSAGE"; expected "identifier"; SQL statement:
+DELETE * FROM CHAT_MESSAGE [42001-197]
+2018-09-05 21:22:51 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Syntax error in SQL statement "SELECT[*]"; expected "TOP, LIMIT, DISTINCT, ALL, *, NOT, EXISTS, INTERSECTS"; SQL statement:
+SELECT [42001-197]
+2018-09-05 22:29:20 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLException: Table "CHAT_MESSAGES" not found; SQL statement:
+SELECT * FROM chat_messages [42102-197]

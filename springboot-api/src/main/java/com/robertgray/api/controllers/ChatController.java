@@ -41,8 +41,7 @@ public class ChatController {
     @CrossOrigin(origins = { "http://localhost:8080", "http://localhost:8090" }, maxAge = 6000)
     @MessageMapping("/chat.sendMessage")
     @SendTo("/topic/public")
-    public ChatMessage sendMessage(@Payload ChatMessage chatMessage,
-                                   SimpMessageHeaderAccessor headerAccessor) {
+    public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
 
         timeSyncController.checkAndSendTime(chatMessage);
 
@@ -52,7 +51,7 @@ public class ChatController {
         lock.lock(); //obtain the lock
         try {
             //Store the message
-            logger.info("Persisting chat message: " + chatMessage.getSender() + " - " + chatMessage.getContent() + " - " + headerAccessor.toString() + "\n");
+            logger.info("Persisting chat message: " + chatMessage.getSender() + " - " + chatMessage.getContent() + "\n");
             success = chatStorageController.insertChatMessage(chatMessage);
             storedMessage = chatStorageController.getChatMessageByHash(chatMessage.getHash());
 

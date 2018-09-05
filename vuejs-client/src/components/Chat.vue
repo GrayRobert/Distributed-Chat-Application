@@ -121,11 +121,11 @@ export default {
             messages.sort(function (message1, message2) {
             // If the first item has a higher number, move it down
             // If the first item has a lower number, move it up
-            if (message2.lastMessageId == message1.lastMessageId) return 0;
-            if (message2.lastMessageId > message1.id) return -1;
-            if (message2.lastMessageId < message1.id) return 1;
-            if (message2.id > message1.id) return -1;
-            if (message2.id < message1.id) return 1;
+            if ((message2.lastMessageId && message1.lastMessageId) && (message2.lastMessageId == message1.lastMessageId)) {return 0;}
+            if (message2.lastMessageId && message2.lastMessageId > message1.id) {return -1;}
+            if (message2.lastMessageId && message2.lastMessageId < message1.id) {return 1;}
+            if (message2.id > message1.id) {return -1;}
+            if (message2.id < message1.id) {return 1;}
             });
             return messages
         },
