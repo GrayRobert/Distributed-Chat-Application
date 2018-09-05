@@ -1,8 +1,6 @@
 package com.robertgray.api.controllers;
 
 import com.robertgray.api.models.ChatMessage;
-import org.joda.time.DateTime;
-import org.mybatis.spring.MyBatisSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

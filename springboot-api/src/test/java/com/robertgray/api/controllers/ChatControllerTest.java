@@ -1,7 +1,5 @@
 package com.robertgray.api.controllers;
 
-import com.anarsoft.vmlens.concurrent.junit.ConcurrentTestRunner;
-import com.anarsoft.vmlens.concurrent.junit.ThreadCount;
 import com.robertgray.api.models.ChatMessage;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,15 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 //Basically this test starts up 2 threads and sends 10 messages concurrently in each thread
 //The result is 20 messages in under 1 second which means they all have the same time stamp to the second.
