@@ -1,2 +1,3 @@
 /Users/robertgray/sandbox/distributed-systems/springboot-api/src/test/java/com/robertgray/api/ApplicationTests.java
+/Users/robertgray/sandbox/distributed-systems/springboot-api/src/test/java/com/robertgray/api/controllers/ChatControllerTest.java
 /Users/robertgray/sandbox/distributed-systems/springboot-api/src/test/java/com/robertgray/api/mappers/ChatMessageMapperTest.java
