@@ -61,7 +61,8 @@ import md5 from 'md5'
 //----------> CONSTANTS <----------//
 //const webSocketEndPoint = '//chatappus.com:8443/chat-socket'
 //const clientApiTimeOut = 60000; //Time out before API will kick the client off
-const webSocketEndPoint = 'ws://localhost:8090/chat-socket'
+const webSocketEndPoint = 'ws://chatappus.com:8443/chat-socket'
+//const webSocketEndPoint = 'ws://localhost:8090/chat-socket'
 const stompSendEndPoint = '/app/chat.sendMessage'
 const stompSubscribeTopic = '/topic/public'
 const stompAddUserEndPoint = '/app/chat.addUser'
