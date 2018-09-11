@@ -12,20 +12,20 @@ self.__precacheManifest = [
     "url": "/img/mstile-150x150.png"
   },
   {
-    "revision": "5bd5fbae046423e50434",
-    "url": "/js/app.5bd5fbae.js"
+    "revision": "2e3f799026aa15589316",
+    "url": "/js/app.2e3f7990.js"
   },
   {
-    "revision": "8e1f074666328fe5e81198631ee2f12b",
+    "revision": "ba460c6e98efccf389e3f5f2dd374425",
     "url": "/index.html"
-  },
-  {
-    "revision": "7847957f5d6236332cc037ab5387a012",
-    "url": "/img/favicon-16x16.png"
   },
   {
     "revision": "53c274aed5787abc53b45b4653511f53",
     "url": "/img/favicon-32x32.png"
+  },
+  {
+    "revision": "7847957f5d6236332cc037ab5387a012",
+    "url": "/img/favicon-16x16.png"
   },
   {
     "revision": "339e9aa0bc4ce04bbd57",
@@ -52,7 +52,7 @@ self.__precacheManifest = [
     "url": "/css/chunk-vendors.43369001.css"
   },
   {
-    "revision": "5bd5fbae046423e50434",
+    "revision": "2e3f799026aa15589316",
     "url": "/css/app.4d41af9d.css"
   }
 ];
