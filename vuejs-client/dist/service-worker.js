@@ -14,10 +14,10 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.4.1/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.1c7311da6a51d06453c366e8a4386392.js"
+  "/precache-manifest.a6b8afb2a1f9fcbe6d72af42f9b2c2c5.js"
 );
 
-workbox.core.setCacheNameDetails({prefix: "vuejs-client"});
+workbox.core.setCacheNameDetails({prefix: "chatappus-client"});
 
 /**
  * The workboxSW.precacheAndRoute() method efficiently caches and responds to
