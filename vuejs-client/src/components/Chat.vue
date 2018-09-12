@@ -59,8 +59,8 @@ import md5 from 'md5'
 
 
 //----------> CONSTANTS <----------//
-//const webSocketEndPoint = 'wss://chatappus.com:8443/chat-socket'
-const webSocketEndPoint = 'ws://localhost:8090/chat-socket'
+const webSocketEndPoint = 'wss://chatappus.com:8443/chat-socket'
+//const webSocketEndPoint = 'ws://localhost:8090/chat-socket'
 const stompSendEndPoint = '/app/chat.sendMessage'
 const stompSubscribeTopic = '/topic/public'
 const stompAddUserEndPoint = '/app/chat.addUser'

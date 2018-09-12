@@ -12,11 +12,11 @@ self.__precacheManifest = [
     "url": "/img/mstile-150x150.png"
   },
   {
-    "revision": "d10e43509fbb0f990a77",
-    "url": "/js/app.d10e4350.js"
+    "revision": "8fbc505eacf7b3f653dc",
+    "url": "/js/app.8fbc505e.js"
   },
   {
-    "revision": "7a3791037b3338a351cbf4595eab17ed",
+    "revision": "d82982b83a88c2237af7a798b57ffe2c",
     "url": "/index.html"
   },
   {
@@ -52,7 +52,7 @@ self.__precacheManifest = [
     "url": "/css/chunk-vendors.43369001.css"
   },
   {
-    "revision": "d10e43509fbb0f990a77",
+    "revision": "8fbc505eacf7b3f653dc",
     "url": "/css/app.4d41af9d.css"
   }
 ];

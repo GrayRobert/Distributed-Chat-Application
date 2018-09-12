@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.4.1/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.a6b8afb2a1f9fcbe6d72af42f9b2c2c5.js"
+  "/precache-manifest.c4753bf267b5fec72ee136eccb2d8727.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "chatappus-client"});
