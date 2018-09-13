@@ -2,6 +2,12 @@
 
 Demo: https://chatappus.com
 
+<blockquote>
+  <p>The ChatAppUs application was designed as a project to demonstrate distributed systems concepts. It's designed with scalability, fault tolerance with eventual consistency in mind. The API is a Spring Boot java application and the client is a VueJs progressive Web App. It is a working progress with plenty of room to grow.</p>
+  </blockquote>
+  
+___
+
 ## Running the Server
 
 Requirements: Java 8 & Maven
