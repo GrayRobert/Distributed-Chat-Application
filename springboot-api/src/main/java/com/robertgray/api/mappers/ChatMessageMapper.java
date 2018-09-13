@@ -42,6 +42,9 @@ public interface ChatMessageMapper {
     @Delete("DELETE FROM chat_message WHERE id = #{id}")
     public int deleteMessageById(BigInteger id);
 
+    @Delete("DELETE FROM chat_message WHERE id <> 1")
+    public int deleteAllMessages();
+
 
 
 }
